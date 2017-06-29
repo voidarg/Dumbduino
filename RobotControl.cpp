@@ -2,6 +2,7 @@
 // 
 // 
 
+#include "ErrorCodes.h"
 #include "RobotControl.h"
 
 void RobotControlClass::init()
@@ -15,18 +16,22 @@ void RobotControlClass::init()
 	kinematicChains[5].init(13, 11, A5);
 }
 
-void RobotControlClass::processCommand(byte *buffer)
+Result::ResultCode RobotControlClass::move(byte motor, byte direction, byte speed)
 {
-	if (buffer[0] == 'M') {
-		// move
-		byte motor = buffer[1];
-		byte direction = buffer[2];
-		byte speed = buffer[3];
+	if (motor < 0 || motor > 5)
+		return Result::ParameterOutOfRange;
 
-		if (motor >= 0 && motor < 6) {
-			kinematicChains[motor].move(direction, speed);
-		}
-	}
+	kinematicChains[motor].move(direction, speed);
+	return Result::Success;
+}
+
+Result::ResultCode RobotControlClass::getPosition(byte motor, int &position)
+{
+	if (motor < 0 || motor > 5)
+		return Result::ParameterOutOfRange;
+
+	position = kinematicChains[motor].readPosition();
+	return Result::Success;
 }
 
 RobotControlClass RobotControl;

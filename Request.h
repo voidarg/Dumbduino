@@ -9,45 +9,30 @@
 	#include "WProgram.h"
 #endif
 
-// forward declarations for supported
-class RequestClass;
-class MoveRequestClass;
-class PositionRequestClass;
+#include "MoveRequest.h"
+#include "PositionRequest.h"
+#include "IRequest.h"
 
-class RequestHandlerClass
+class RequestClass :
+	public virtual IRequest,
+	private virtual MoveRequest_M,
+	private virtual PositionRequest_P
 {
- private:
-	 static RequestClass* receiving; // request, currently being received
-
-	 // supported requests
-	 static MoveRequestClass move;		// request to move motor
-	 static PositionRequestClass position;	// request to
-
- public
-};
-
-
-class RequestClass
-{
-};
-
-
-class MoveRequestClass : RequestClass
-{
-private:
 public:
-	virtual bool readNext()
-	{
+	virtual void clear();
+	void init();
+	virtual Result::ResultCode process();
 
+private: 
+	void selectInterface(char id);
 
-	}
-};
-
-class PositionRequestClass : RequestClass
-{
 private:
-public:
+	bool receiving;
+	IRequest* current;
+	Result::ResultCode status;
 };
+
+extern RequestClass Request;
 
 #endif
 

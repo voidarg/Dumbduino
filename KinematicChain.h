@@ -13,6 +13,7 @@
 class KinematicChainClass
 {
  private:
+
 	 int upperLimit;
 	 int lowerLimit;
 	 byte directionPin;

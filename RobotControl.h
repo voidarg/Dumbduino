@@ -18,7 +18,8 @@ class RobotControlClass
 
  public:
 	void init();
-	void processCommand(byte *pbuffer);
+	Result::ResultCode move(byte motor, byte direction, byte speed);
+	Result::ResultCode getPosition(byte motor, int &position);
 };
 
 extern RobotControlClass RobotControl;
