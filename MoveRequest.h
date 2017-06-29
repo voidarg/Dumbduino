@@ -11,7 +11,7 @@
 
 #include "IRequest.h"
 
-class MoveRequest_M : public virtual IRequest
+class MoveRequest_M : public IRequest
 {
 public:
 	enum { RequestId = 'M' };

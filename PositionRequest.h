@@ -11,7 +11,7 @@
 
 #include "IRequest.h"
 
-class PositionRequest_P : public virtual IRequest
+class PositionRequest_P : public IRequest
 {
 public:
 	enum { RequestId = 'P' };

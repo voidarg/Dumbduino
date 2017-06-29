@@ -20,28 +20,35 @@ Result::ResultCode MoveRequest_M::process()
 	{
 	case 0:		// receiving motor id
 	{
+    Serial.print ("MR1");
 		readMotorId();
 	}
 	case 1:		// receiving first delimiter
 	{
+    Serial.print ("MR2");
 		return readDelimiter();
 	}
 	case 2:		// receiving direction
 	{
+    Serial.print ("MR3");
 		return readDirection();
 	}
 	case 3:		// receiving second delimiter
 	{
+  Serial.print ("MR4");
 		return readDelimiter();
 	}
 	case 4:		// receiving speed
 	{
+  Serial.print ("MR5");
 		return readSpeed();
 	}
 	default:	// receiving closing tag
 	{
+  Serial.print ("MR6");
 		Result::ResultCode res = readClosingTag();
 		if (Result::Success == res) {
+    Serial.print ("MR7");
 			return execute();
 		}
 		else {
@@ -56,6 +63,7 @@ inline Result::ResultCode MoveRequest_M::readMotorId()
 	Result::ResultCode ret = RequestFormat::readAndValidateByte(0, 5, motor);
 	if (ret == Result::Pending) {
 		++step;
+   
 	}
 	return  ret;
 }
@@ -76,6 +84,9 @@ inline Result::ResultCode MoveRequest_M::readDirection()
 	if (Serial.available()) {
 		direction = Serial.read();
 		if (direction != 'F' && direction != 'B') {
+      Serial.print ("*DIR = ");
+      Serial.print (direction);
+      Serial.println ("*");
 			ret = Result::ParameterOutOfRange;
 		}
 		else {

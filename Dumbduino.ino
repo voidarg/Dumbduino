@@ -14,7 +14,9 @@ void setup()
 	Request.init();
 
 	// start serial communication
-	Serial.begin(115200, SERIAL_8O1);
+	// Serial.begin(115200, SERIAL_8O1);
+  Serial.begin(115200);
+
 }
 
 
@@ -30,7 +32,7 @@ void loop()
 
 void serialEvent()
 {
-	Result::ResultCode res = Request.process();
+	Result::ResultCode res = Request.processNext();
 
 /*	switch (res)
 	{

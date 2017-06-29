@@ -14,14 +14,13 @@
 #include "IRequest.h"
 
 class RequestClass :
-	public virtual IRequest,
 	private virtual MoveRequest_M,
 	private virtual PositionRequest_P
 {
 public:
 	virtual void clear();
 	void init();
-	virtual Result::ResultCode process();
+	virtual Result::ResultCode processNext();
 
 private: 
 	void selectInterface(char id);

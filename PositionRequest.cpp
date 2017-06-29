@@ -18,10 +18,12 @@ Result::ResultCode PositionRequest_P::process()
 	{
 	case 0:		// receiving motor id
 	{
+    Serial.print("*PR1");
 		return readMotorId();
 	}
 	default:	// receiving closing tag
 	{
+  Serial.print("*PR2");
 		Result::ResultCode res = readClosingTag();
 		if (Result::Success == res) {
 			return execute();
