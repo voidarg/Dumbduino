@@ -5,9 +5,11 @@
 #include "RequestFormat.h"
 #include "RobotControl.h"
 #include "MoveRequest.h"
+#include "Diagnostics.h"
 
 void MoveRequest_M::clear()
 {
+	trace("clearing request");
 	step = 0;
 	motor = 0;
 	direction = 0;
@@ -20,58 +22,50 @@ Result::ResultCode MoveRequest_M::process()
 	{
 	case 0:		// receiving motor id
 	{
-    Serial.print ("MR1");
-		readMotorId();
+		return readMotorId();
 	}
-	case 1:		// receiving first delimiter
+	case 1:		// receiving direction
 	{
-    Serial.print ("MR2");
-		return readDelimiter();
-	}
-	case 2:		// receiving direction
-	{
-    Serial.print ("MR3");
 		return readDirection();
 	}
-	case 3:		// receiving second delimiter
+	case 2:		// receiving speed
 	{
-  Serial.print ("MR4");
-		return readDelimiter();
-	}
-	case 4:		// receiving speed
-	{
-  Serial.print ("MR5");
-		return readSpeed();
-	}
-	default:	// receiving closing tag
-	{
-  Serial.print ("MR6");
-		Result::ResultCode res = readClosingTag();
-		if (Result::Success == res) {
-    Serial.print ("MR7");
+		Result::ResultCode res = readSpeed();
+		if (Result::Pending == res) {
 			return execute();
 		}
 		else {
 			return res;
 		}
 	}
+	default:	// receiving closing tag
+	{
+		trace("NEVER SHOULD GET HERE! Step = ");
+		traceln(step);
+		
+		return Result::CorruptPacket;
+	}
 	}
 }
 
 inline Result::ResultCode MoveRequest_M::readMotorId()
 {
+	traceln("reading motor id");
+	
 	Result::ResultCode ret = RequestFormat::readAndValidateByte(0, 5, motor);
 	if (ret == Result::Pending) {
-		++step;
-   
+		traceln(motor);
+		++step;	
 	}
 	return  ret;
 }
 
 inline Result::ResultCode MoveRequest_M::readDelimiter()
 {
+	traceln("getting deimiter value");
 	Result::ResultCode ret = RequestFormat::readDelimiter(RequestFormat::ArgumentDelimiter);
 	if (ret == Result::Pending) {
+		traceln(ret);
 		++step;
 	}
 	return ret;
@@ -81,12 +75,13 @@ inline Result::ResultCode MoveRequest_M::readDirection()
 {
 	Result::ResultCode ret{Result::Waiting};
 
+	traceln("reading direction");
 	if (Serial.available()) {
 		direction = Serial.read();
+		trace("direction received: ");
+		traceln(direction);
+
 		if (direction != 'F' && direction != 'B') {
-      Serial.print ("*DIR = ");
-      Serial.print (direction);
-      Serial.println ("*");
 			ret = Result::ParameterOutOfRange;
 		}
 		else {
@@ -98,11 +93,13 @@ inline Result::ResultCode MoveRequest_M::readDirection()
 
 inline Result::ResultCode MoveRequest_M::readSpeed()
 {
+	traceln("reading speed");
 	Result::ResultCode ret = RequestFormat::readAndValidateByte(0, 255, speed);
 	if (ret == Result::Pending) {
+		traceln(speed);
 		++step;
 	}
-	return  ret;
+	return ret;
 }
 
 inline Result::ResultCode MoveRequest_M::readClosingTag()

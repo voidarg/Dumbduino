@@ -15,14 +15,10 @@ class PositionRequest_P : public IRequest
 {
 public:
 	enum { RequestId = 'P' };
-	virtual Result::ResultCode process();
-
-protected:
-	virtual void clear();
+	virtual Result::ResultCode process() final;
+	virtual void clear() final;
 
 private:
-	Result::ResultCode readMotorId();
-	Result::ResultCode readClosingTag();
 	Result::ResultCode execute();
 
 private:

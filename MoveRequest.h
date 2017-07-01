@@ -15,10 +15,8 @@ class MoveRequest_M : public IRequest
 {
 public:
 	enum { RequestId = 'M' };
-	virtual Result::ResultCode process();
-
-protected:
-	virtual void clear();
+	virtual Result::ResultCode process() final;
+	virtual void clear() final;
 
 private:
 	Result::ResultCode readMotorId();

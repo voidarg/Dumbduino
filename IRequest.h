@@ -12,8 +12,6 @@ struct IRequest
 {
 public:
 	virtual Result::ResultCode process() = 0;
-
-protected:
 	virtual void clear() = 0;
 };
 

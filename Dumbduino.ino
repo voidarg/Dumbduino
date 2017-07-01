@@ -1,4 +1,7 @@
 
+
+#include "Response.h"
+#include "Diagnostics.h"
 #include "RequestFormat.h"
 #include "ErrorCodes.h"
 #include "PositionRequest.h"
@@ -33,23 +36,12 @@ void loop()
 void serialEvent()
 {
 	Result::ResultCode res = Request.processNext();
-
-/*	switch (res)
-	{
-	case Result::Success:
-		break;
-	case Result::Pending:
-		break;
-	case Result::Waiting:
-		break;
-	default:
-	}*/
 	
 	if (res >= Result::Success) {
 		Serial.print("<");
 		Serial.print(res, DEC);
 		Serial.print(">");
 
-		Request.clear();
+		Request.reset();
 	}
 }

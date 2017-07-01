@@ -18,7 +18,7 @@ class RequestClass :
 	private virtual PositionRequest_P
 {
 public:
-	virtual void clear();
+	virtual void reset();
 	void init();
 	virtual Result::ResultCode processNext();
 
