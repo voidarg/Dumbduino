@@ -8,10 +8,12 @@
 #include "WProgram.h"
 #endif
 
+#include "RequestReader.h"
+
 struct IRequest
 {
 public:
-	virtual Result::ResultCode process() = 0;
+	virtual ResultClass::ResultCode process() = 0;
 	virtual void clear() = 0;
 };
 

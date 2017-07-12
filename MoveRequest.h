@@ -15,16 +15,16 @@ class MoveRequest_M : public IRequest
 {
 public:
 	enum { RequestId = 'M' };
-	virtual Result::ResultCode process() final;
+	virtual ResultClass::ResultCode process() final;
 	virtual void clear() final;
 
 private:
-	Result::ResultCode readMotorId();
-	Result::ResultCode readDelimiter();
-	Result::ResultCode readDirection();
-	Result::ResultCode readSpeed();
-	Result::ResultCode readClosingTag();
-	Result::ResultCode execute();
+	ResultClass::ResultCode readMotorId();
+	ResultClass::ResultCode readDelimiter();
+	ResultClass::ResultCode readDirection();
+	ResultClass::ResultCode readSpeed();
+	ResultClass::ResultCode readClosingTag();
+	ResultClass::ResultCode execute();
 
 private:
 	byte step;

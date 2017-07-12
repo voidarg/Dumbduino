@@ -45,13 +45,13 @@
     <ClInclude Include="IRequest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RequestFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Diagnostics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Response.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,13 +77,13 @@
     <ClCompile Include="ErrorCodes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RequestFormat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Response.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

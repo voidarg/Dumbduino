@@ -2,7 +2,7 @@
 // 
 // 
 #include "ErrorCodes.h"
-#include "RequestFormat.h"
+#include "RequestReader.h"
 #include "RobotControl.h"
 #include "PositionRequest.h"
 #include "Diagnostics.h"
@@ -13,25 +13,26 @@ void PositionRequest_P::clear()
 	motor = 0;
 }
 
-Result::ResultCode PositionRequest_P::process()
+ResultClass::ResultCode PositionRequest_P::process()
 {
-	traceln("reading motor id");
-	Result::ResultCode res = RequestFormat::readAndValidateByte(0, 5, motor);
-	if (Result::Pending == res) {
-		trace("read ");
-		traceln(motor);
-		return execute();
+	Result.reset();
+	if (RequestReader.getReadStatus() == RequestReaderClass::ReadStatus::ParamAvailable) {
+		// process parameter here
+		if (RequestReader.getByteParam(motor)) {
+			Result.set(execute());
+		}
+		else {
+			Result.set(ResultClass::ParameterOutOfRange);
+		}
 	}
-	else {
-		return res;
-	}
+	return Result.get();
 }
 
-inline Result::ResultCode PositionRequest_P::execute()
+inline ResultClass::ResultCode PositionRequest_P::execute()
 {
 	int pos;
-	Result::ResultCode res = RobotControl.getPosition(motor, pos);
-	if (res == Result::Success) {
+	Result.set(RobotControl.getPosition(motor, pos));
+	if (Result.Succeeded()) {
 		Serial.print("{M");
 		Serial.print(motor, DEC);
 		Serial.print(',');
@@ -39,7 +40,7 @@ inline Result::ResultCode PositionRequest_P::execute()
 		Serial.print(pos, DEC);
 		Serial.print("}");
 	}
-	return res;
+	return Result;
 }
 
 

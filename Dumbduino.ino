@@ -2,8 +2,8 @@
 
 #include "Response.h"
 #include "Diagnostics.h"
-#include "RequestFormat.h"
-#include "ErrorCodes.h"
+#include "RequestReader.h"
+#include "RequestReader.h"
 #include "PositionRequest.h"
 #include "MoveRequest.h"
 #include "Request.h"
@@ -30,18 +30,27 @@ void setup()
 void loop()
 {
 	// read positions
+	if (Serial.available()) {
+		ResultClass::ResultCode res = Request.processNext();
 
+		if (res >= ResultClass::Success) {
+			Request.reset();
+			Serial.print("<");
+			Serial.print(res, DEC);
+			Serial.print(">");
+		}
+	}
 }
-
+/*
 void serialEvent()
 {
-	Result::ResultCode res = Request.processNext();
+	ResultClass::ResultCode res = Request.processNext();
 	
-	if (res >= Result::Success) {
+	if (res >= ResultClass::Success) {
+		Request.reset();
 		Serial.print("<");
 		Serial.print(res, DEC);
 		Serial.print(">");
-
-		Request.reset();
 	}
 }
+*/

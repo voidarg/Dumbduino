@@ -3,8 +3,10 @@
 //
 #include "Diagnostics.h"
 #include "ErrorCodes.h"
-#include "RequestFormat.h"
+#include "RequestReader.h"
 #include "Request.h"
+#include "Diagnostics.h"
+
 
 void RequestClass::init()
 {
@@ -20,46 +22,46 @@ void RequestClass::reset()
 	}
 
 	receiving = false;
-	status = Result::Waiting;
+	status = ResultClass::Waiting;
 }
 
-Result::ResultCode RequestClass::processNext()
+ResultClass::ResultCode RequestClass::processNext()
 {
-	if (Serial.available()) {
-		char ch = Serial.peek();
-
-		if (! receiving) {
-			if (ch == RequestFormat::StartChar) {
-				receiving = true;
-				status = Result::Pending;
-			}
-			(void) Serial.read(); // read the byte out of the buffer
-		}
-		else if (status == Result::Pending || status == Result::Waiting) {			
-			// check if there is and unexpected start of the request
-			if (ch == RequestFormat::StartChar) {
-    			status = Result::CorruptPacket;
+	RequestReaderClass::ReadStatus rs = RequestReader.readNext();
+	switch (rs)
+	{
+		case RequestReaderClass::ReadStatus::WaitingForData:
+			break; // TODO: timeout tracking
+		case RequestReaderClass::ReadStatus::CommandAvailable:
+		{	
+			// get command here
+			char command;
+			if (RequestReader.getCommand(command)) {
+				selectInterface(command);
 			}
 			else {
-				// process input
-    			ch = Serial.read();
-				if (current == NULL) {	// we don't have command byte yet, then this is it
-					selectInterface(ch);
-
-					if (current != NULL) {	// if appropriate interface was located
-						status = current->process();
-					}
-				}
-				else {
-    				status = current->process();
-				}
+				RequestReader.reset();
 			}
+			break;
+		}
+		case RequestReaderClass::ReadStatus::ParamAvailable:
+			if (ResultClass::Succeeded(current->process())) {
+				Result.set(ResultClass::Pending);
+			}
+			break;
+		case RequestReaderClass::ReadStatus::Eof:
+			Result.set(ResultClass::Success);
+			RequestReader.reset();
+			break;
+		case RequestReaderClass::ReadStatus::Error:
+			RequestReader.reset();
+			break;
+		default:
+		{
+			Result.set(ResultClass::ResultCode::Pending);
 		}
 	}
-	else {
-		status = Result::Waiting;
-	}
-	return status;
+	return Result;
 }
 
 
@@ -76,7 +78,7 @@ void RequestClass::selectInterface(char id)
 		break;
 
 	default: // invalid command id
-		status = Result::UnrecognizedCommand;
+		status = ResultClass::UnrecognizedCommand;
 	}
 }
 

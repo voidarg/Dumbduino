@@ -2,122 +2,98 @@
 // 
 // 
 #include "ErrorCodes.h"
-#include "RequestFormat.h"
+#include "RequestReader.h"
 #include "RobotControl.h"
 #include "MoveRequest.h"
 #include "Diagnostics.h"
 
 void MoveRequest_M::clear()
 {
-	trace("clearing request");
 	step = 0;
 	motor = 0;
 	direction = 0;
 	speed = 0;
 }
 
-Result::ResultCode MoveRequest_M::process()
+ResultClass::ResultCode MoveRequest_M::process()
 {
-	switch (step)
-	{
-	case 0:		// receiving motor id
-	{
-		return readMotorId();
-	}
-	case 1:		// receiving direction
-	{
-		return readDirection();
-	}
-	case 2:		// receiving speed
-	{
-		Result::ResultCode res = readSpeed();
-		if (Result::Pending == res) {
-			return execute();
+	Result.reset();
+	if (RequestReader.getReadStatus() == RequestReaderClass::ReadStatus::ParamAvailable) {
+		switch (step)
+		{
+			case 0:		// receiving motor id
+			{
+				return readMotorId();
+			}
+			case 1:		// receiving direction
+			{
+				return readDirection();
+			}
+			case 2:		// receiving speed
+			{
+				Result.set (readSpeed());
+				if (Result.Succeeded()) {
+					return execute();
+				}
+			}
+			default:
+			{
+				Result.set(ResultClass::CorruptPacket);
+			}
 		}
-		else {
-			return res;
-		}
 	}
-	default:	// receiving closing tag
-	{
-		trace("NEVER SHOULD GET HERE! Step = ");
-		traceln(step);
-		
-		return Result::CorruptPacket;
-	}
-	}
+	return Result;
 }
 
-inline Result::ResultCode MoveRequest_M::readMotorId()
+inline ResultClass::ResultCode MoveRequest_M::readMotorId()
 {
-	traceln("reading motor id");
-	
-	Result::ResultCode ret = RequestFormat::readAndValidateByte(0, 5, motor);
-	if (ret == Result::Pending) {
-		traceln(motor);
-		++step;	
+	if (RequestReader.getByteParam(motor)) {
+		Result.set(ResultClass::Success);
 	}
-	return  ret;
+	else {
+		Result.set(ResultClass::CorruptPacket);
+	}
+	return Result;
 }
 
-inline Result::ResultCode MoveRequest_M::readDelimiter()
+inline ResultClass::ResultCode MoveRequest_M::readDirection()
 {
-	traceln("getting deimiter value");
-	Result::ResultCode ret = RequestFormat::readDelimiter(RequestFormat::ArgumentDelimiter);
-	if (ret == Result::Pending) {
-		traceln(ret);
-		++step;
-	}
-	return ret;
-}
-
-inline Result::ResultCode MoveRequest_M::readDirection()
-{
-	Result::ResultCode ret{Result::Waiting};
-
-	traceln("reading direction");
-	if (Serial.available()) {
-		direction = Serial.read();
-		trace("direction received: ");
-		traceln(direction);
-
+	if (RequestReader.getCharParam(direction)) {
 		if (direction != 'F' && direction != 'B') {
-			ret = Result::ParameterOutOfRange;
+			Result.set (ResultClass::ParameterOutOfRange);
 		}
 		else {
 			++step;
+			Result.reset();
 		}
 	}
-	return ret;
-}
-
-inline Result::ResultCode MoveRequest_M::readSpeed()
-{
-	traceln("reading speed");
-	Result::ResultCode ret = RequestFormat::readAndValidateByte(0, 255, speed);
-	if (ret == Result::Pending) {
-		traceln(speed);
-		++step;
+	else {
+		Result.set(ResultClass::CorruptPacket);
 	}
-	return ret;
+	return Result;
 }
 
-inline Result::ResultCode MoveRequest_M::readClosingTag()
+inline ResultClass::ResultCode MoveRequest_M::readSpeed()
 {
-	Result::ResultCode ret = RequestFormat::readDelimiter(RequestFormat::EndChar);
-	if (ret == Result::Pending) {
+	if (RequestReader.getByteParam(speed)) {
 		++step;
+		Result.reset();
 	}
-	return ret;
+	else {
+		Result.set(ResultClass::CorruptPacket);
+	}
+	return Result;
 }
 
-inline Result::ResultCode MoveRequest_M::execute()
+inline ResultClass::ResultCode MoveRequest_M::execute()
 {
-	Result::ResultCode res = RobotControl.move (
-		motor,
-		direction == 'F' ? 1 : 0,
-		speed);
+	Result.set(
+		RobotControl.move(
+			motor,
+			direction == 'F' ? 1 : 0,
+			speed));
 
-	return res;
+	return Result;
+
 }
 

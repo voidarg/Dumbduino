@@ -16,22 +16,22 @@ void RobotControlClass::init()
 	kinematicChains[5].init(13, 11, A5);
 }
 
-Result::ResultCode RobotControlClass::move(byte motor, byte direction, byte speed)
+ResultClass::ResultCode RobotControlClass::move(byte motor, byte direction, byte speed)
 {
 	if (motor < 0 || motor > 5)
-		return Result::ParameterOutOfRange;
+		return ResultClass::ParameterOutOfRange;
 
 	kinematicChains[motor].move(direction, speed);
-	return Result::Success;
+	return ResultClass::Success;
 }
 
-Result::ResultCode RobotControlClass::getPosition(byte motor, int &position)
+ResultClass::ResultCode RobotControlClass::getPosition(byte motor, int &position)
 {
 	if (motor < 0 || motor > 5)
-		return Result::ParameterOutOfRange;
+		return ResultClass::ParameterOutOfRange;
 
 	position = kinematicChains[motor].readPosition();
-	return Result::Success;
+	return ResultClass::Success;
 }
 
 RobotControlClass RobotControl;

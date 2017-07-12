@@ -20,7 +20,7 @@ class RequestClass :
 public:
 	virtual void reset();
 	void init();
-	virtual Result::ResultCode processNext();
+	virtual ResultClass::ResultCode processNext();
 
 private: 
 	void selectInterface(char id);
@@ -28,10 +28,9 @@ private:
 private:
 	bool receiving;
 	IRequest* current;
-	Result::ResultCode status;
+	ResultClass::ResultCode status;
 };
 
 extern RequestClass Request;
-
 #endif
 

@@ -9,6 +9,8 @@
 	#include "WProgram.h"
 #endif
 
+
+
 template <typename T> 
 void trace(const T& data) {
 	Serial.print(data);

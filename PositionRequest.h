@@ -10,16 +10,17 @@
 #endif
 
 #include "IRequest.h"
+#include "ErrorCodes.h"
 
 class PositionRequest_P : public IRequest
 {
 public:
 	enum { RequestId = 'P' };
-	virtual Result::ResultCode process() final;
+	virtual ResultClass::ResultCode process() final;
 	virtual void clear() final;
 
 private:
-	Result::ResultCode execute();
+	ResultClass::ResultCode execute();
 
 private:
 	byte motor;

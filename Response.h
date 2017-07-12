@@ -14,7 +14,7 @@
 class ResponseClass
 {
  private:
-	 Result::ResultCode status;
+	 ResultClass::ResultCode status;
 	 String data;
 
  public:
