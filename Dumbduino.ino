@@ -29,8 +29,12 @@ void setup()
  ****************************************************/
 void loop()
 {
+}
+
+void serialEvent()
+{
 	// read positions
-	if (Serial.available()) {
+//	if (Serial.available()) {
 		ResultClass::ResultCode res = Request.processNext();
 
 		if (res >= ResultClass::Success) {
@@ -39,18 +43,6 @@ void loop()
 			Serial.print(res, DEC);
 			Serial.print(">");
 		}
-	}
+	//}
+
 }
-/*
-void serialEvent()
-{
-	ResultClass::ResultCode res = Request.processNext();
-	
-	if (res >= ResultClass::Success) {
-		Request.reset();
-		Serial.print("<");
-		Serial.print(res, DEC);
-		Serial.print(">");
-	}
-}
-*/

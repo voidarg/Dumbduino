@@ -48,6 +48,7 @@ ResultClass::ResultCode MoveRequest_M::process()
 inline ResultClass::ResultCode MoveRequest_M::readMotorId()
 {
 	if (RequestReader.getByteParam(motor)) {
+		++step;
 		Result.set(ResultClass::Success);
 	}
 	else {
