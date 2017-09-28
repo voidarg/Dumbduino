@@ -9,7 +9,8 @@ void KinematicChainClass::init(byte directionPin, byte movementPin, byte positio
 	pinMode(directionPin, OUTPUT);
 	pinMode(movementPin, OUTPUT);
 	pinMode(positionPin, INPUT);
-
+	pinMode(12, OUTPUT);
+	digitalWrite(12, 1);
 	KinematicChainClass::directionPin = directionPin;
 	KinematicChainClass::movementPin = movementPin;
 	KinematicChainClass::positionPin = positionPin;

@@ -1,5 +1,3 @@
-
-
 #include "Response.h"
 #include "Diagnostics.h"
 #include "RequestReader.h"
@@ -36,12 +34,11 @@ void serialEvent()
 	// read positions
 //	if (Serial.available()) {
 		ResultClass::ResultCode res = Request.processNext();
-
 		if (res >= ResultClass::Success) {
 			Request.reset();
-			Serial.print("<");
-			Serial.print(res, DEC);
-			Serial.print(">");
+			//Serial.print("<");
+			//Serial.print(res, DEC);
+			//Serial.print(">");
 		}
 	//}
 

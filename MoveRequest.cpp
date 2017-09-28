@@ -93,7 +93,16 @@ inline ResultClass::ResultCode MoveRequest_M::execute()
 			motor,
 			direction == 'F' ? 1 : 0,
 			speed));
-
+	int pos;
+	Result.set(RobotControl.getPosition(motor, pos));
+	if (Result.Succeeded()) {
+		Serial.print("{M");
+		Serial.print(motor, DEC);
+		Serial.print(',');
+		Serial.print("P");
+		Serial.print(pos, DEC);
+		Serial.print("}");
+	}
 	return Result;
 
 }
